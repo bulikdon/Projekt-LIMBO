@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@600;800&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'MedievalSharp', cursive, sans-serif;
+      margin: 0;
+      padding: 15px;
+      display: flex;
+      justify-content: center;
+      color: #2b1c10;
+    }
+
+    /* LIMBO FEHÉR DIMENZIÓ KONTÉNER */
+    .limbo-container {
+      background: linear-gradient(135deg, #fdfbf7 0%, #eef0f2 100%);
+      border: 2px solid #d4c5b9;
+      border-radius: 12px;
+      padding: 35px 30px;
+      width: 100%;
+      max-width: 900px;
+      box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.08),
+        inset 0 0 40px rgba(255, 255, 255, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* FŐCÍM */
+    .main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 32px;
+      font-weight: 800;
+      color: #3d2314;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 25px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 12px;
+      text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.9);
+    }
+
+    /* BEVEZETŐ STORY DOBOZ */
+    .intro-box {
+      background: rgba(255, 255, 255, 0.7);
+      border-left: 4px solid #8b5a2b;
+      border-radius: 0 8px 8px 0;
+      padding: 20px 22px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      font-size: 17px;
+      line-height: 1.6;
+      color: #3a281c;
+    }
+
+    /* EDMUND KÉP KONTÉNER */
+    .edmund-image-container {
+      text-align: center;
+      margin: 25px 0 15px 0;
+    }
+
+    .edmund-image-container img {
+      max-width: 100%;
+      height: auto;
+      max-height: 380px;
+      border-radius: 8px;
+      border: 3px solid #8b5a2b;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    /* EDMUND IDÉZET DOBOZ */
+    .edmund-quote {
+      background: #f4e4bc;
+      background-image: linear-gradient(to bottom, #f8ebd0, #e8d3a2);
+      border: 1px solid #c8b082;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 15px 0 35px 0;
+      font-family: 'Kalam', cursive;
+      font-size: 19px;
+      color: #2b1810;
+      box-shadow: 
+        0 4px 10px rgba(0, 0, 0, 0.1),
+        inset 0 0 20px rgba(139, 90, 43, 0.15);
+      position: relative;
+    }
+
+    .edmund-name {
+      font-weight: bold;
+      color: #8b5a2b;
+      font-family: 'Cinzel', serif;
+      font-size: 16px;
+      margin-bottom: 5px;
+      display: block;
+      text-transform: uppercase;
+    }
+
+    /* ALAPTÖRVÉNYEK SZEKCIÓ */
+    .laws-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      color: #3d2314;
+      text-align: center;
+      margin: 35px 0 20px 0;
+      letter-spacing: 1px;
+    }
+
+    .laws-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 15px;
+    }
+
+    .law-card {
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #dcd1c4;
+      border-radius: 8px;
+      padding: 18px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .law-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+      border-color: #8b5a2b;
+    }
+
+    .law-number {
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      color: #8b5a2b;
+      font-size: 16px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .law-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #3d2f24;
+      margin: 0;
+    }
+
+    /* KARKÖTŐ SZABÁLY KIEMELÉS */
+    .bracelet-card {
+      background: #fbf6ec;
+      border: 1px solid #d4af37;
+    }
+    .bracelet-card .law-number {
+      color: #b8860b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="limbo-container">
+    
+    <h1 class="main-title">Üdvözöllek a Limbo-ban, Vándor!</h1>
+
+    <div class="intro-box">
+      <p style="margin-top:0;">Kinyitod a szemed. Körülötted semmi más nincs, csak a végtelen, csöndes fehérség. Nincsenek emlékeid arról, hogyan kerültél ide. Előtted egyetlen magányos épület magasodik: <strong>Az Öreg Fogadó</strong>.</p>
+      
+      <p style="margin-bottom:0;">A bejárat mellett egy fa táblán rászögelt pergamenek lengedeznek a semmiből támadó hűs szélben – a <strong>Küldetéstábla</strong>. A pult mögött egy férfi mosolyog rád barátságosan.</p>
+    </div>
+
+    <!-- EDMUND KÉP A KÖSZÖNTÉS ELŐTT -->
+    <div class="edmund-image-container">
+      <img src="https://lh3.googleusercontent.com/d/1kRDaUB9sSr_V5UCdj76t19SUIfboiXwC" alt="Edmund, a Fogadós">
+    </div>
+
+    <!-- EDMUND KÖSZÖNTŐ IDÉZETE -->
+    <div class="edmund-quote">
+      "Üdv az Öreg Fogadóban! Edmund vagyok. Ne aggódj, itt biztonságban vagy. Válasszatok egy küldetést, lépjetek át a portálon, és fedezzétek fel a világot!"
+    </div>
+
+    <h2 class="laws-title">A Limbo Alaptörvényei</h2>
+
+    <div class="laws-grid">
+      
+      <div class="law-card">
+        <span class="law-number">1. A Limbo örök</span>
+        <p class="law-text">A Limbo létezik, senki sem tudja mióta. Innen nyílnak a portálok más világokba, utazni csak innen lehet a világok között.</p>
+      </div>
+
+      <div class="law-card">
+        <span class="law-number">2. A Portálok & A Küldetéstábla</span>
+        <p class="law-text">A portálok eredete ismeretlen. Amint leveszel egy pergament a Küldetéstábláról, a megfelelő portál megnyílik egy alternatív valóságba.</p>
+      </div>
+
+      <div class="law-card">
+        <span class="law-number">3. A Karkötő Szabálya</span>
+        <p class="law-text">A multiverzumban talált legendás szövetségesek kizárólag egy speciális védelmező karkötővel léphetnek be a Limbóba!</p>
+      </div>
+
+      <div class="law-card">
+        <span class="law-number">4. Véges Expedíciók</span>
+        <p class="law-text">A küldetések végén a csapat mindig visszatér a Limbóba. A döntéseitek azonban fizikailag és permanensen formálják a Limbót és a Fogadót!</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
