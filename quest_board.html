@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@700&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'Kalam', cursive, sans-serif;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      color: #2b1c10;
+    }
+
+    /* FA HIRDETŐTÁBLA KERET */
+    .wooden-board {
+      background-color: #2b170c;
+      background-image: url('https://lh3.googleusercontent.com/d/1g6O50vFwij4a3WXdCiL8SP6gbzoaOpMN');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      
+      border: 10px solid #1c0d06;
+      border-radius: 12px;
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 1000px;
+      min-height: 550px;
+      
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.8),
+        inset 0 0 25px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+
+    .wooden-board::before, .wooden-board::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle at 30% 30%, #777, #111);
+      border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .wooden-board::before { top: 8px; left: 8px; }
+    .wooden-board::after { top: 8px; right: 8px; }
+
+    /* CÉGÉR FEJLÉC */
+    .board-title {
+      font-family: 'Cinzel', serif;
+      color: #d8be8a;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      margin: 0 auto 30px auto;
+      background: #3d2314;
+      border: 3px solid #5a321a;
+      padding: 10px 25px;
+      border-radius: 8px;
+      box-shadow: 
+        inset 0 0 10px rgba(90, 50, 26, 0.4), 
+        0 5px 10px rgba(0,0,0,0.6);
+      letter-spacing: 3px;
+      max-width: 380px;
+      text-transform: uppercase;
+    }
+
+    /* KÜLDETÉSEK RÁCSA */
+    .quest-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 35px 25px;
+      width: 100%;
+      padding: 10px;
+    }
+
+    /* 3:2 ARÁNYÚ VÍZSZINTES PERGAMEN CÉDULA */
+    .parchment-card {
+      aspect-ratio: 3 / 2;
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%),
+        linear-gradient(to bottom, #f5e6c4, #e8d3a2);
+      border: 1px solid #c8b082;
+      border-radius: 3px;
+      padding: 22px 18px 14px 18px;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.6),
+        inset 0 0 25px rgba(139, 90, 43, 0.15);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      
+      transform: translate(var(--offset-x, 0px), var(--offset-y, 0px)) rotate(var(--rotation, 0deg));
+      transition: transform 0.25s ease, box-shadow 0.25s ease, z-index 0.25s ease;
+      z-index: 1;
+    }
+
+    .parchment-card:hover {
+      transform: scale(1.06) rotate(0deg) !important;
+      box-shadow: 
+        0 14px 30px rgba(0, 0, 0, 0.85),
+        inset 0 0 30px rgba(139, 90, 43, 0.22);
+      z-index: 20;
+    }
+
+    /* RAJZSZÖG - MINDIG FIXEN KÖZÉPEN */
+    .pin {
+      width: 14px;
+      height: 14px;
+      background: radial-gradient(circle at 30% 30%, #b22222, #4a0000);
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.7);
+      border: 1px solid #2a0000;
+    }
+
+    /* CÍM */
+    .quest-title {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 19px;
+      font-weight: bold;
+      color: #2b1810;
+      margin: 2px 0 6px 0;
+      text-align: center;
+      border-bottom: 1px dashed #a68b5b;
+      padding-bottom: 4px;
+      line-height: 1.2;
+    }
+
+    /* LEÍRÁS */
+    .quest-desc {
+      font-size: 13.5px;
+      color: #4a3525;
+      font-style: italic;
+      line-height: 1.35;
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 2px 0;
+      margin-bottom: 6px;
+    }
+
+    /* ALSÓ ADATOK SORA */
+    .quest-footer {
+      border-top: 1px dotted #a68b5b;
+      padding-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .quest-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      color: #3a271d;
+    }
+
+    .quest-reward-row {
+      font-size: 12.5px;
+      color: #3a271d;
+      line-height: 1.3;
+    }
+
+    .quest-footer strong {
+      color: #1a0f0a;
+    }
+
+    .type-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 10.5px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      text-align: center;
+      background: #5a321a;
+      color: #f4e4bc;
+      align-self: flex-start;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 480px) {
+      .parchment-card {
+        aspect-ratio: auto;
+        min-height: 230px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wooden-board" id="board">
+    <div class="board-title">QUEST BOARD</div>
+
+    <div class="quest-grid" id="quest-container">
+      <div style="color: #f4e4bc; font-style: italic; text-align: center; grid-column: 1/-1;">
+        Küldetések beolvasása a tábláról...
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMi_CaslXrJjtRre43CHhv20Pc_z0B86JTY0glRJclmvzPyhrqK_Fq_VwgrWdoHDHhTBy6eePVzGpp/pub?output=csv';
+
+    async function loadQuests() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const quests = parseCSV(data);
+        renderQuests(quests);
+      } catch (e) {
+        console.error("Hiba a táblázat betöltésekor:", e);
+        document.getElementById('quest-container').innerHTML = '<div style="color:#ff8888; text-align:center; grid-column: 1/-1;">Sikertelen betöltés!</div>';
+      }
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return [];
+
+      const result = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+        if (cols.length >= 2) {
+          result.push({
+            title: cols[0] || "Névtelen küldetés",
+            level: cols[1] || "-",
+            desc: cols[2] || "",
+            players: cols[3] || "-",
+            type: cols[4] || "Küldetés",
+            reward: cols[5] || "-"
+          });
+        }
+      }
+      return result;
+    }
+
+    function seededRandom(seed) {
+      const x = Math.sin(seed++) * 10000;
+      return x - Math.floor(x);
+    }
+
+    function renderQuests(quests) {
+      const container = document.getElementById('quest-container');
+      container.innerHTML = '';
+
+      if (quests.length === 0) {
+        container.innerHTML = '<div style="color:#f4e4bc; text-align:center; grid-column: 1/-1;">Még nincsenek küldetések a táblán.</div>';
+        return;
+      }
+
+      quests.forEach((q, i) => {
+        const randRot = (seededRandom(i * 3 + 1) * 8 - 4).toFixed(1);
+        const randX = (seededRandom(i * 5 + 2) * 16 - 8).toFixed(0);
+        const randY = (seededRandom(i * 7 + 3) * 12 - 6).toFixed(0);
+
+        const card = document.createElement('div');
+        card.className = 'parchment-card';
+        card.style.setProperty('--rotation', `${randRot}deg`);
+        card.style.setProperty('--offset-x', `${randX}px`);
+        card.style.setProperty('--offset-y', `${randY}px`);
+
+        card.innerHTML = `
+          <div class="pin"></div>
+          
+          <div class="quest-title">${q.title}</div>
+          
+          <div class="quest-desc">${q.desc ? `"${q.desc}"` : ''}</div>
+          
+          <div class="quest-footer">
+            <div class="quest-meta-row">
+              <span><strong>Szint:</strong> ${q.level}</span>
+              <span><strong>Létszám:</strong> ${q.players}</span>
+            </div>
+            <div class="quest-reward-row">
+              <strong>Jutalom:</strong> <span>${q.reward}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="type-badge">${q.type}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    loadQuests();
+  </script>
+</body>
+</html>
