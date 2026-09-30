@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=MedievalSharp&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'MedievalSharp', cursive, sans-serif;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #2b1c10;
+    }
+
+    .worlds-container {
+      width: 100%;
+      max-width: 950px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .worlds-title {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      color: #3d2314;
+      text-align: center;
+      margin-bottom: 5px;
+      letter-spacing: 2px;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+
+    .worlds-intro {
+      font-family: 'Kalam', cursive;
+      font-size: 15px;
+      color: #6b4c35;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+
+    /* ZÁROLT ÁLLAPOT (LAKAT) */
+    .locked-container {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.12) 100%),
+        linear-gradient(to bottom, #ebd8ab, #dfc691);
+      border: 2px dashed #8b5a2b;
+      border-radius: 10px;
+      padding: 35px 25px;
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.08),
+        inset 0 0 25px rgba(139, 90, 43, 0.15);
+      margin-top: 10px;
+    }
+
+    .lock-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: #3d2314;
+      border: 2px solid #8b5a2b;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    .lock-svg {
+      width: 32px;
+      height: 32px;
+      fill: #f4e4bc;
+    }
+
+    .locked-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #3d2314;
+      margin: 0 0 8px 0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .locked-desc {
+      font-size: 14.5px;
+      color: #5a3e2b;
+      margin: 0;
+      line-height: 1.5;
+      max-width: 500px;
+      font-style: italic;
+    }
+
+    .locked-hint {
+      font-family: 'Kalam', cursive;
+      font-size: 13px;
+      color: #8b5a2b;
+      margin-top: 12px;
+      background: rgba(139, 90, 43, 0.1);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(139, 90, 43, 0.2);
+    }
+
+    /* VILÁG KÁRTYA */
+    .world-card {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%),
+        linear-gradient(to bottom, #f5e6c4, #e8d3a2);
+      border: 2px solid #c8b082;
+      border-radius: 8px;
+      padding: 22px;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 25px rgba(139, 90, 43, 0.12);
+      display: flex;
+      gap: 25px;
+      width: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .world-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 22px rgba(0, 0, 0, 0.15),
+        inset 0 0 30px rgba(139, 90, 43, 0.18);
+      border-color: #8b5a2b;
+    }
+
+    /* BAL OLDALI KÉP */
+    .world-img-wrap {
+      flex-shrink: 0;
+      width: 200px;
+      height: 200px;
+      border-radius: 8px;
+      border: 3px solid #8b5a2b;
+      overflow: hidden;
+      background: #e5d2aa;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .world-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* JOBB OLDALI TARTALOM */
+    .world-content {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .world-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px dashed #8b5a2b;
+      padding-bottom: 5px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .world-name {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 800;
+      color: #2b1810;
+      margin: 0;
+    }
+
+    .world-rep {
+      font-size: 13px;
+      font-weight: bold;
+      color: #8b5a2b;
+      background: rgba(139, 90, 43, 0.12);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(139, 90, 43, 0.25);
+    }
+
+    .world-meta-row {
+      font-size: 14px;
+      color: #3d2f24;
+      line-height: 1.45;
+      margin: 2px 0;
+    }
+
+    .world-meta-row strong {
+      color: #1a0f0a;
+      font-weight: 700;
+    }
+
+    .quests-badge {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: bold;
+      color: #2e7d32;
+      background: rgba(46, 125, 50, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(46, 125, 50, 0.25);
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 700px) {
+      .world-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .world-img-wrap {
+        width: 160px;
+        height: 160px;
+      }
+      .world-header {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="worlds-container">
+    <div class="worlds-title">A MULTIVERZUM ATLASZA</div>
+    <div class="worlds-intro">„A portálok túloldalán fekvő ismert valóságok és dimenziók...”</div>
+
+    <!-- TARTALOM KONTÉNER (IDE TÖLTŐDIK BE A LAKAT VAGY A VILÁGOK) -->
+    <div id="worlds-content" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+      <div style="color: #666; font-style: italic;">A multiverzum adatainak beolvasása...</div>
+    </div>
+  </div>
+
+  <script>
+    // A megadott Google Sheets lap CSV export linkje
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMi_CaslXrJjtRre43CHhv20Pc_z0B86JTY0glRJclmvzPyhrqK_Fq_VwgrWdoHDHhTBy6eePVzGpp/pub?gid=504761345&single=true&output=csv';
+
+    async function loadWorlds() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const worlds = parseCSV(data);
+        renderWorlds(worlds);
+      } catch (e) {
+        console.error("Hiba a világok betöltésekor:", e);
+        showLockedFallback();
+      }
+    }
+
+    function formatImageUrl(url) {
+      if (!url || url.trim() === '') return '';
+      const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch && driveMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+      }
+      return url;
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return [];
+
+      const result = [];
+      // Oszlopok: Kép linkje | Név | Teljesített küldetések száma | Ismert NPC-k listája | Ismert helyszínek listája | Beszerezhető alapanyagok | Reputáció
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+        if (cols.length >= 2 && cols[1] !== '') {
+          result.push({
+            img: formatImageUrl(cols[0]),
+            name: cols[1] || 'Ismeretlen Világ',
+            quests: cols[2] || '0',
+            npcs: cols[3] || 'Még nem találkoztatok senkivel',
+            locations: cols[4] || 'Feltérképezetlen',
+            materials: cols[5] || 'Ismeretlen nyersanyagok',
+            rep: cols[6] || 'Semleges'
+          });
+        }
+      }
+      return result;
+    }
+
+    function renderWorlds(worlds) {
+      const container = document.getElementById('worlds-content');
+      container.innerHTML = '';
+
+      // Ha nincs még felfedezett világ, automatikusan megjelenik a lakat
+      if (worlds.length === 0) {
+        showLockedFallback();
+        return;
+      }
+
+      const defaultImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238b5a2b'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z'/%3E%3C/svg%3E";
+
+      worlds.forEach(w => {
+        const card = document.createElement('div');
+        card.className = 'world-card';
+
+        card.innerHTML = `
+          <div class="world-img-wrap">
+            <img src="${w.img || defaultImg}" alt="${w.name}" onerror="this.src='${defaultImg}'">
+          </div>
+          
+          <div class="world-content">
+            <div class="world-header">
+              <h3 class="world-name">${w.name}</h3>
+              <div class="world-rep">Reputáció: ${w.rep}</div>
+            </div>
+
+            <div>
+              <span class="quests-badge">Teljesített küldetések: ${w.quests}</span>
+            </div>
+
+            <div class="world-meta-row"><strong>Ismert NJK-k:</strong> ${w.npcs}</div>
+            <div class="world-meta-row"><strong>Felfedezett helyszínek:</strong> ${w.locations}</div>
+            <div class="world-meta-row"><strong>Beszerezhető alapanyagok:</strong> ${w.materials}</div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function showLockedFallback() {
+      const container = document.getElementById('worlds-content');
+      container.innerHTML = `
+        <div class="locked-container">
+          <div class="lock-icon-wrap">
+            <svg class="lock-svg" viewBox="0 0 24 24">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+          </div>
+          <h2 class="locked-title">Feltáratlan Multiverzum</h2>
+          <p class="locked-desc">
+            A portálok túloldala még sűrű ködbe burkolózik. A vándorok még egyetlen alternatív világot sem fedeztek fel teljesen.
+          </p>
+          <div class="locked-hint">Válasszatok egy küldetést a Küldetéstábláról az első világ feloldásához!</div>
+        </div>
+      `;
+    }
+
+    loadWorlds();
+  </script>
+</body>
+</html>

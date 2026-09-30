@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=MedievalSharp&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'MedievalSharp', cursive, sans-serif;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #2b1c10;
+      position: relative;
+    }
+
+    /* LIMBO FEHÉR TÉRKÉP VÁSZON */
+    .map-canvas {
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f0ede6 100%);
+      border: 2px solid #d4c5b9;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 1100px;
+      padding: 30px 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .map-title {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      color: #3d2314;
+      text-align: center;
+      margin-bottom: 30px;
+      letter-spacing: 2px;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 8px;
+    }
+
+    /* FA-MODELL ELRENDEZÉS */
+    .tree-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .tree-row {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 30px;
+      width: 100%;
+    }
+
+    /* ÉPÜLET CSOMÓPONT */
+    .building-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      width: 230px;
+    }
+
+    /* ÉPÜLET FELIRAT */
+    .node-title-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: bold;
+      color: #3d2314;
+      background: #f4e4bc;
+      background-image: linear-gradient(to bottom, #f8ebd0, #e8d3a2);
+      border: 1px solid #c8b082;
+      padding: 4px 10px;
+      border-radius: 5px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+      margin-bottom: 8px;
+      text-align: center;
+      width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* KÉP KONTÉNER */
+    .node-image-wrap {
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      border: 4px solid #8b5a2b;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+      background: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .node-image-wrap img {
+      max-width: 190px;
+      max-height: 190px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .building-node:hover {
+      transform: translateY(-6px);
+    }
+
+    .building-node:hover .node-title-badge {
+      border-color: #5a321a;
+      background: #e8d3a2;
+    }
+
+    .building-node:hover .node-image-wrap {
+      border-color: #5a321a;
+      box-shadow: 0 12px 28px rgba(139, 90, 43, 0.5);
+    }
+
+    .building-node:hover img {
+      transform: scale(1.08);
+    }
+
+    /* ZÁROLT TARTALOM KÁRTYA (LAKAT) */
+    .locked-container {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.12) 100%),
+        linear-gradient(to bottom, #ebd8ab, #dfc691);
+      border: 2px dashed #8b5a2b;
+      border-radius: 10px;
+      padding: 30px 20px;
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.08),
+        inset 0 0 25px rgba(139, 90, 43, 0.15);
+      margin-top: 10px;
+    }
+
+    .lock-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: #3d2314;
+      border: 2px solid #8b5a2b;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    .lock-svg {
+      width: 32px;
+      height: 32px;
+      fill: #f4e4bc;
+    }
+
+    .locked-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #3d2314;
+      margin: 0 0 8px 0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .locked-desc {
+      font-size: 14.5px;
+      color: #5a3e2b;
+      margin: 0;
+      line-height: 1.5;
+      max-width: 500px;
+      font-style: italic;
+    }
+
+    .locked-hint {
+      font-family: 'Kalam', cursive;
+      font-size: 13px;
+      color: #8b5a2b;
+      margin-top: 12px;
+      background: rgba(139, 90, 43, 0.1);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(139, 90, 43, 0.2);
+    }
+
+    /* FELUGRÓ ABLAK (MODAL) HÁTTÉR */
+    .modal-overlay {
+      display: none;
+      position: absolute;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(2px);
+      z-index: 9999;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+
+    /* MODAL KÁRTYA */
+    .modal-card {
+      background: #fdfbf7;
+      background-image: linear-gradient(to bottom, #ffffff, #f7f3eb);
+      border: 3px solid #8b5a2b;
+      border-radius: 12px;
+      max-width: 550px;
+      width: 100%;
+      padding: 25px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      position: absolute;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px; 
+      right: 15px;
+      font-size: 26px;
+      color: #8b5a2b;
+      cursor: pointer;
+      font-weight: bold;
+      border: none;
+      background: none;
+      line-height: 1;
+    }
+
+    .modal-title {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      color: #3d2314;
+      margin-top: 0;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 8px;
+      text-align: center;
+    }
+
+    .npc-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #f4e4bc;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #c8b082;
+      margin: 15px 0;
+    }
+
+    .npc-avatar {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      border: 2px solid #8b5a2b;
+      object-fit: cover;
+    }
+
+    .npc-info { font-size: 14px; }
+    .npc-name { font-family: 'Cinzel', serif; font-weight: bold; color: #3d2314; font-size: 16px; }
+
+    .cost-badge {
+      display: inline-block;
+      background: #8b5a2b;
+      color: #f4e4bc;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .upgrade-list { display: grid; gap: 10px; margin-top: 15px; }
+
+    .upgrade-item.locked {
+      background: #f8f6f0;
+      border: 1px dashed #c8b082;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="map-canvas" id="canvas-area">
+    <div class="map-title">A LIMBO TÉRKÉPE</div>
+
+    <div class="tree-container">
+      
+      <!-- GYÖKÉR: ÖREG FOGADÓ (AKTÍV) -->
+      <div class="tree-row">
+        <div class="building-node" onclick="openModal('modal-inn', this)">
+          <div class="node-title-badge">Az Öreg Fogadó</div>
+          <div class="node-image-wrap">
+            <img src="https://lh3.googleusercontent.com/d/1M8_fgVYCH8JqT9dM2zgjMdJOgH-Gr4DN" alt="Fogadó">
+          </div>
+        </div>
+      </div>
+
+      <!-- LAKAT KÁRTYA A ZÁROLT ÉPÜLETEK ELŐTT -->
+      <div class="locked-container">
+        <div class="lock-icon-wrap">
+          <svg class="lock-svg" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+        </div>
+        <h2 class="locked-title">Zárolt Terület</h2>
+        <p class="locked-desc">
+          A fehér köd még sűrűn gomolyog az Öreg Fogadó körül. A vándorok még nem fedezték fel az újabb építményeket, és a Limbo sem áll készen a bővülésre.
+        </p>
+        <div class="locked-hint">Teljesítsetek küldetéseket és gyűjtsetek aranyat a feloldáshoz!</div>
+      </div>
+
+      <!-- TIER 1 ÉPÜLETEK (KIKOMMENTELVE) -->
+      <!--
+      <div class="tree-row">
+        <div class="building-node" onclick="openModal('modal-kovacs', this)">
+          <div class="node-title-badge">Kovácsműhely</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1CpruAQ2e5NlaJvxk3DLdvszNKfBnVy2T" alt="Kovács"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-vegyes', this)">
+          <div class="node-title-badge">Vegyeskereskedő</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1TUGWStSULPBJvV0e_MrDmhKpXpkJjPMY" alt="Vegyeskereskedő"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-ispotaly', this)">
+          <div class="node-title-badge">Ispotály (Chopper)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/12AM9ooo6FrIw-OurZ-a7BCqvu3m7q0Nz" alt="Ispotály"></div>
+        </div>
+      </div>
+      -->
+
+      <!-- TIER 2 ÉPÜLETEK (KIKOMMENTELVE) -->
+      <!--
+      <div class="tree-row">
+        <div class="building-node" onclick="openModal('modal-ponton', this)">
+          <div class="node-title-badge">Bájital bolt (Piton)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1J_CndCTMMXGCY2SQY58x3LOOOyghgDJE" alt="Bájital bolt"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-konyvtar', this)">
+          <div class="node-title-badge">Könyvtár (Hermione)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1ty4J1Oo2MUI2I_zkZANh4OQ8xOLqPCgM" alt="Könyvtár"></div>
+        </div>
+      </div>
+      -->
+
+      <!-- TIER 3 ÉPÜLETEK (KIKOMMENTELVE) -->
+      <!--
+      <div class="tree-row">
+        <div class="building-node" onclick="openModal('modal-edzoterem', this)">
+          <div class="node-title-badge">Edzőterem (Zseniális Teknős)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1BiTiDUb8Z32IJ5N5_4QEXdrltCsWMZeM" alt="Edzőterem"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-ruha', this)">
+          <div class="node-title-badge">Ruhaüzlet (Edna Mode)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1pO7F1KHpAINEI3PKSAUdGt0JyRiMYrUF" alt="Ruhaüzlet"></div>
+        </div>
+      </div>
+      -->
+
+      <!-- TIER 4 ÉPÜLETEK (KIKOMMENTELVE) -->
+      <!--
+      <div class="tree-row">
+        <div class="building-node" onclick="openModal('modal-muhely', this)">
+          <div class="node-title-badge">Műhely (Stark & Bulma)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/18dMFf8s04LX6yJXrHrl2MYaO12n26sFT" alt="Műhely"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-varazstargy', this)">
+          <div class="node-title-badge">Varázstárgyak boltja</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1rTctKQoxMPJs3wqOJp6T66SL8M3LZGu2" alt="Varázstárgyak boltja"></div>
+        </div>
+        <div class="building-node" onclick="openModal('modal-jedi', this)">
+          <div class="node-title-badge">Jedi Templom (Yoda)</div>
+          <div class="node-image-wrap"><img src="https://lh3.googleusercontent.com/d/1CSfbv_JYRJSb6pPAvLfpobg3Renc7Ndn" alt="Jedi Templom"></div>
+        </div>
+      </div>
+      -->
+
+    </div>
+  </div>
+
+  <!-- MODAL ABLAKOK -->
+
+  <!-- Öreg Fogadó Modal -->
+  <div class="modal-overlay" id="modal-inn" onclick="closeOutside(event, 'modal-inn')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-inn')">&times;</button>
+      <div class="modal-title">Az Öreg Fogadó</div>
+      <div class="npc-section">
+        <img src="https://lh3.googleusercontent.com/d/1kRDaUB9sSr_V5UCdj76t19SUIfboiXwC" alt="Edmund" class="npc-avatar">
+        <div class="npc-info">
+          <div class="npc-name">Edmund (A Fogadós)</div>
+          <p style="margin: 3px 0 0 0; font-style: italic;">"Mindig barátságosan mosolyog a pult mögött."</p>
+        </div>
+      </div>
+      <p>A Limbo központi épülete. Innen nyílnak a lakószobákszobák, ahol pihenhettek, és előtte áll a Küldetéstábla.</p>
+      <div style="font-weight:bold; margin-top:15px;">Feloldható modulok:</div>
+      <div class="upgrade-list">
+        <div class="upgrade-item locked"><b>Konyha:</b> Amint feloldjátok, a Long rest regenerációt biztosít</div>
+        <div class="upgrade-item locked"><b>Színpad:</b> Amint feloldjátok, háttérzenét hallgatunk a kalandok közben!</div>
+        <div class="upgrade-item locked"><b>Krónikás sarok:</b> Amint feloldjátok, hozzáférhettek a LIMBO Krónikájához</div>
+        <div class="upgrade-item locked"><b>Pince:</b> Amint feloldjátok, Edmund alkoholos italokat is felszolgál</div>
+        <div class="upgrade-item locked"><b>Istálló:</b> Amint feloldjátok, elkezdődhet a tojások keltetése</div>
+        <div class="upgrade-item locked"><b>Kártyaasztal:</b> Amint feloldjátok, minden nap más nyereményért játszhattok.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kovács Modal -->
+  <div class="modal-overlay" id="modal-kovacs" onclick="closeOutside(event, 'modal-kovacs')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-kovacs')">&times;</button>
+      <div class="modal-title">Kovácsműhely</div>
+      <div class="cost-badge">Ár: 500 Gold</div>
+      <p><b>Funkció:</b> Fegyverek, vértek készítése és javítása; lőszer készítése.</p>
+    </div>
+  </div>
+
+  <!-- Vegyeskereskedő Modal -->
+  <div class="modal-overlay" id="modal-vegyes" onclick="closeOutside(event, 'modal-vegyes')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-vegyes')">&times;</button>
+      <div class="modal-title">Vegyeskereskedő</div>
+      <div class="cost-badge">Ár: 500 Gold</div>
+      <p><b>Funkció:</b> Általános beszerzési cikkek árusítása a kalandozáshoz.</p>
+    </div>
+  </div>
+
+  <!-- Ispotály Modal -->
+  <div class="modal-overlay" id="modal-ispotaly" onclick="closeOutside(event, 'modal-ispotaly')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-ispotaly')">&times;</button>
+      <div class="modal-title">Ispotály (Kórház)</div>
+      <div class="cost-badge">Ár: 500 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Tony Tony Chopper</div></div>
+      </div>
+      <p><b>Funkció:</b> Azonnal visszaállítja az életerődet a maximumra.</p>
+    </div>
+  </div>
+
+  <!-- Bájital bolt Modal -->
+  <div class="modal-overlay" id="modal-ponton" onclick="closeOutside(event, 'modal-ponton')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-ponton')">&times;</button>
+      <div class="modal-title">Bájital Bolt</div>
+      <div class="cost-badge">Ár: 1000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Perszelusz Piton</div></div>
+      </div>
+      <p><b>Funkció:</b> Különleges bájitalokat készít és árul.</p>
+    </div>
+  </div>
+
+  <!-- Könyvtár Modal -->
+  <div class="modal-overlay" id="modal-konyvtar" onclick="closeOutside(event, 'modal-konyvtar')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-konyvtar')">&times;</button>
+      <div class="modal-title">Könyvtár</div>
+      <div class="cost-badge">Ár: 1000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Hermione Granger</div></div>
+      </div>
+      <p><b>Funkció:</b> Minden könyvet átvesz, rendszerez, információkat gyűjthettek a multiverzumról.</p>
+    </div>
+  </div>
+
+  <!-- Edzőterem Modal -->
+  <div class="modal-overlay" id="modal-edzoterem" onclick="closeOutside(event, 'modal-edzoterem')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-edzoterem')">&times;</button>
+      <div class="modal-title">Edzőterem</div>
+      <div class="cost-badge">Ár: 4000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Zseniális Teknős</div></div>
+      </div>
+      <p><b>Funkció:</b> Fegyver, vért és pajzs proficiency tanulható.</p>
+    </div>
+  </div>
+
+  <!-- Ruhaüzlet Modal -->
+  <div class="modal-overlay" id="modal-ruha" onclick="closeOutside(event, 'modal-ruha')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-ruha')">&times;</button>
+      <div class="modal-title">Ruhaüzlet</div>
+      <div class="cost-badge">Ár: 4000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Edna Mode</div></div>
+      </div>
+      <p><b>Funkció:</b> Praktikus, ellenálló és stílusos öltözéket készít.</p>
+    </div>
+  </div>
+
+  <!-- Műhely Modal -->
+  <div class="modal-overlay" id="modal-muhely" onclick="closeOutside(event, 'modal-muhely')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-muhely')">&times;</button>
+      <div class="modal-title">Műhely</div>
+      <div class="cost-badge">Ár: 15000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Tony Stark (később Bulma is)</div></div>
+      </div>
+      <p><b>Funkció:</b> Különleges technológiai fejlesztések megszerzése.</p>
+    </div>
+  </div>
+
+  <!-- Varázstárgyak boltja Modal -->
+  <div class="modal-overlay" id="modal-varazstargy" onclick="closeOutside(event, 'modal-varazstargy')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-varazstargy')">&times;</button>
+      <div class="modal-title">Varázstárgyak Boltja</div>
+      <div class="cost-badge">Ár: 15000 Gold</div>
+      <p><b>Funkció:</b> Ritka és varázslatos tárgyakkal kereskedik.</p>
+    </div>
+  </div>
+
+  <!-- Jedi Templom Modal -->
+  <div class="modal-overlay" id="modal-jedi" onclick="closeOutside(event, 'modal-jedi')">
+    <div class="modal-card">
+      <button class="close-btn" onclick="closeModal('modal-jedi')">&times;</button>
+      <div class="modal-title">Jedi Templom (Meditációs kamra)</div>
+      <div class="cost-badge">Ár: 15000 Gold</div>
+      <div class="npc-section">
+        <div class="npc-info"><div class="npc-name">Yoda mester</div></div>
+      </div>
+      <p><b>Funkció:</b> Az Erőről lehet tanulni; átkok megtörése (Remove Curse).</p>
+    </div>
+  </div>
+
+  <script>
+    function openModal(id, element) {
+      const overlay = document.getElementById(id);
+      const card = overlay.querySelector('.modal-card');
+      
+      overlay.style.display = 'flex';
+      
+      if (element) {
+        let targetY = element.offsetTop;
+        let parent = element.offsetParent;
+        while (parent && parent !== document.body) {
+          targetY += parent.offsetTop;
+          parent = parent.offsetParent;
+        }
+
+        const adjustedTop = Math.max(20, targetY - 40);
+        card.style.top = adjustedTop + 'px';
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function closeOutside(event, id) {
+      if (event.target.id === id) {
+        closeModal(id);
+      }
+    }
+  </script>
+</body>
+</html>

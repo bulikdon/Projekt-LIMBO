@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=MedievalSharp&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'MedievalSharp', cursive, sans-serif;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #2b1c10;
+    }
+
+    .roster-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .roster-title {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      color: #3d2314;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 8px;
+    }
+
+    /* KARAKTER KÁRTYA (PERGAMEN HANGULAT) */
+    .char-card {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%),
+        linear-gradient(to bottom, #f5e6c4, #e8d3a2);
+      border: 2px solid #c8b082;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.1),
+        inset 0 0 25px rgba(139, 90, 43, 0.12);
+      display: flex;
+      gap: 25px;
+      align-items: center;
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .char-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 10px 22px rgba(0, 0, 0, 0.15),
+        inset 0 0 30px rgba(139, 90, 43, 0.18);
+    }
+
+    /* BAL OLDALI KÉP KONTÉNER */
+    .char-avatar-wrap {
+      flex-shrink: 0;
+      width: 150px;
+      height: 150px;
+      border-radius: 8px;
+      border: 3px solid #8b5a2b;
+      overflow: hidden;
+      background: #e5d2aa;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .char-avatar-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* JOBB OLDALI INFORMÁCIÓK */
+    .char-info {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .char-header {
+      border-bottom: 1px dashed #8b5a2b;
+      padding-bottom: 4px;
+    }
+
+    .char-name {
+      font-family: 'Cinzel', serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #2b1810;
+      margin: 0;
+      display: inline-block;
+    }
+
+    .char-title {
+      font-family: 'Kalam', cursive;
+      font-size: 15px;
+      color: #7a481e;
+      margin-left: 8px;
+      font-style: italic;
+    }
+
+    .char-meta {
+      font-size: 14px;
+      color: #4a3525;
+      margin: 2px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .char-meta-item strong {
+      color: #1a0f0a;
+    }
+
+    .char-desc {
+      font-size: 13.5px;
+      color: #3d2f24;
+      line-height: 1.4;
+      margin: 4px 0;
+      font-style: italic;
+    }
+
+    .char-room {
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #8b5a2b;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(139, 90, 43, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+      align-self: flex-start;
+      border: 1px solid rgba(139, 90, 43, 0.2);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px dashed #c8b082;
+      border-radius: 8px;
+      color: #7a624d;
+      font-size: 16px;
+      font-style: italic;
+    }
+
+    /* MOBIL NÉZET */
+    @media (max-width: 600px) {
+      .char-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .char-avatar-wrap {
+        width: 130px;
+        height: 130px;
+      }
+      .char-meta {
+        justify-content: center;
+      }
+      .char-room {
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="roster-container">
+    <div class="roster-title">KALANDOROK BEMUTATÁSA</div>
+
+    <div id="character-list">
+      <div class="empty-state">Karakterek betöltése a Limbo krónikáiból...</div>
+    </div>
+  </div>
+
+  <script>
+    // A megadott Google Sheets lap CSV export linkje
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMi_CaslXrJjtRre43CHhv20Pc_z0B86JTY0glRJclmvzPyhrqK_Fq_VwgrWdoHDHhTBy6eePVzGpp/pub?gid=397300716&single=true&output=csv';
+
+    async function loadCharacters() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const chars = parseCSV(data);
+        renderCharacters(chars);
+      } catch (e) {
+        console.error("Hiba a karakterek betöltésekor:", e);
+        document.getElementById('character-list').innerHTML = '<div class="empty-state" style="color:red;">Sikertelen betöltés!</div>';
+      }
+    }
+
+    // Google Drive megosztási linkek átalakítása közvetlen képformátumra
+    function formatImageUrl(url) {
+      if (!url || url.trim() === '') return '';
+      const driveMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (driveMatch && driveMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+      }
+      return url;
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return [];
+
+      const result = [];
+      // 0. sor = Kép Linkje | Név | Titulus | Faj | Class | Subclass | Szint | Leírás | Szobaszám
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+        if (cols.length >= 2 && cols[1] !== '') {
+          result.push({
+            img: formatImageUrl(cols[0]),
+            name: cols[1] || 'Névtelen',
+            title: cols[2] || '',
+            race: cols[3] || 'Ismeretlen faj',
+            charClass: cols[4] || 'Ismeretlen kaszt',
+            subclass: cols[5] || '',
+            level: cols[6] || '1',
+            desc: cols[7] || '',
+            room: cols[8] || 'Még nincs kijelölve'
+          });
+        }
+      }
+      return result;
+    }
+
+    function renderCharacters(chars) {
+      const container = document.getElementById('character-list');
+      container.innerHTML = '';
+
+      if (chars.length === 0) {
+        container.innerHTML = '<div class="empty-state">Még egyetlen vándor sem ébredt fel a Limbóban...</div>';
+        return;
+      }
+
+      chars.forEach(c => {
+        const card = document.createElement('div');
+        card.className = 'char-card';
+
+        const classDisplay = c.subclass ? `${c.charClass} (${c.subclass})` : c.charClass;
+        const defaultImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%238b5a2b'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E";
+
+        card.innerHTML = `
+          <div class="char-avatar-wrap">
+            <img src="${c.img || defaultImg}" alt="${c.name}" onerror="this.src='${defaultImg}'">
+          </div>
+          
+          <div class="char-info">
+            <div class="char-header">
+              <h3 class="char-name">${c.name}</h3>
+              ${c.title ? `<span class="char-title">„${c.title}”</span>` : ''}
+            </div>
+
+            <div class="char-meta">
+              <div class="char-meta-item"><strong>Faj:</strong> ${c.race}</div>
+              <div class="char-meta-item"><strong>Kaszt:</strong> ${classDisplay}</div>
+              <div class="char-meta-item"><strong>Szint:</strong> ${c.level}</div>
+            </div>
+
+            ${c.desc ? `<div class="char-desc">"${c.desc}"</div>` : ''}
+
+            <div class="char-room">Szoba: ${c.room}</div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    loadCharacters();
+  </script>
+</body>
+</html>

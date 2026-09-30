@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=MedievalSharp&family=Kalam:wght@400;700&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      background-color: transparent;
+      font-family: 'MedievalSharp', cursive, sans-serif;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #2b1c10;
+    }
+
+    .chronicle-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .chronicle-title {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      color: #3d2314;
+      text-align: center;
+      margin-bottom: 5px;
+      letter-spacing: 2px;
+      border-bottom: 2px solid #8b5a2b;
+      padding-bottom: 8px;
+      width: 100%;
+    }
+
+    .chronicle-intro {
+      font-family: 'Kalam', cursive;
+      font-size: 15px;
+      color: #6b4c35;
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    /* ZÁROLT TARTALOM KÁRTYA (LAKAT) */
+    .locked-container {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.12) 100%),
+        linear-gradient(to bottom, #ebd8ab, #dfc691);
+      border: 2px dashed #8b5a2b;
+      border-radius: 10px;
+      padding: 35px 25px;
+      width: 100%;
+      max-width: 650px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 
+        0 6px 15px rgba(0, 0, 0, 0.08),
+        inset 0 0 25px rgba(139, 90, 43, 0.15);
+      margin-top: 10px;
+    }
+
+    .lock-icon-wrap {
+      width: 64px;
+      height: 64px;
+      background: #3d2314;
+      border: 2px solid #8b5a2b;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.25), inset 0 0 8px rgba(0,0,0,0.6);
+    }
+
+    .lock-svg {
+      width: 32px;
+      height: 32px;
+      fill: #f4e4bc;
+    }
+
+    .locked-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #3d2314;
+      margin: 0 0 8px 0;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .locked-desc {
+      font-size: 14.5px;
+      color: #5a3e2b;
+      margin: 0;
+      line-height: 1.5;
+      max-width: 500px;
+      font-style: italic;
+    }
+
+    .locked-hint {
+      font-family: 'Kalam', cursive;
+      font-size: 13px;
+      color: #8b5a2b;
+      margin-top: 12px;
+      background: rgba(139, 90, 43, 0.1);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(139, 90, 43, 0.2);
+    }
+
+    /* FEJEZET KÁRTYA */
+    .chapter-card {
+      background: #f4e4bc;
+      background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.05) 100%),
+        linear-gradient(to bottom, #f5e6c4, #e8d3a2);
+      border: 2px solid #c8b082;
+      border-radius: 8px;
+      padding: 18px 22px;
+      box-shadow: 
+        0 5px 12px rgba(0, 0, 0, 0.1),
+        inset 0 0 20px rgba(139, 90, 43, 0.12);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .chapter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .chapter-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .chapter-num {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #8b5a2b;
+      background: rgba(139, 90, 43, 0.1);
+      border: 1px solid rgba(139, 90, 43, 0.25);
+      border-radius: 50%;
+      min-width: 44px;
+      height: 44px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .chapter-title {
+      font-family: 'Cinzel', serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #2b1810;
+      margin: 0;
+    }
+
+    /* ELOLVASOM GOMB */
+    .read-btn {
+      background: #8b5a2b;
+      color: #f4e4bc;
+      border: none;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 13px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      transition: background 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .read-btn:hover {
+      background: #5a321a;
+      transform: scale(1.03);
+    }
+
+    /* KOMPAKT ÉS ILLESZKEDŐ BEÁGYAZÓ KERET */
+    .doc-viewer-wrap {
+      display: none;
+      width: 100%;
+      height: 520px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 2px solid #8b5a2b;
+      background: #fff2cc;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.12);
+      margin-top: 10px;
+    }
+
+    .doc-viewer-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 2px dashed #c8b082;
+      border-radius: 8px;
+      color: #7a624d;
+      font-size: 16px;
+      font-style: italic;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      .chapter-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .chapter-info {
+        flex-direction: column;
+      }
+      .read-btn {
+        width: 100%;
+      }
+      .doc-viewer-wrap {
+        height: 400px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chronicle-container">
+    
+    <!-- LAKAT KÁRTYA A ZÁROLT KRÓNIKÁKHOZ -->
+    <div class="locked-container">
+      <div class="lock-icon-wrap">
+        <svg class="lock-svg" viewBox="0 0 24 24">
+          <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+      </div>
+      <h2 class="locked-title">Zárolt Krónikák</h2>
+      <p class="locked-desc">
+        A Krónikás Sarok még nem épült fel az Öreg Fogadóban. A kalandok feljegyzései egyelőre rejtve maradnak a vándorok elől.
+      </p>
+      <div class="locked-hint">Építsétek meg a Krónikás Sarkot a feloldáshoz!</div>
+    </div>
+
+    <!-- KIKOMMENTELT KRÓNIKA TARTALOM (FELOLDÁSKOR TÖRÖLD A KOMMENT JELEKET) -->
+    <!--
+    <div class="chronicle-title">A LIMBO KRÓNIKÁI</div>
+    <div class="chronicle-intro">„Minden kaland egy újabb bejegyzés az örökkévalóság könyvében...” — Zsákos Bilbó</div>
+
+    <div id="chronicle-list" style="width: 100%;">
+      <div class="empty-state">Krónikák betöltése a könyvtárból...</div>
+    </div>
+    -->
+
+  </div>
+
+  <!-- KIKOMMENTELT BETÖLTŐ JS (FELOLDÁSKOR TÖRÖLD A KOMMENT JELEKET) -->
+  <!--
+  <script>
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQMi_CaslXrJjtRre43CHhv20Pc_z0B86JTY0glRJclmvzPyhrqK_Fq_VwgrWdoHDHhTBy6eePVzGpp/pub?gid=1120335797&single=true&output=csv';
+
+    async function loadChronicles() {
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const data = await response.text();
+        const chapters = parseCSV(data);
+        renderChronicles(chapters);
+      } catch (e) {
+        console.error("Hiba a krónikák betöltésekor:", e);
+        document.getElementById('chronicle-list').innerHTML = '<div class="empty-state" style="color:red;">Sikertelen betöltés!</div>';
+      }
+    }
+
+    function formatDocEmbedUrl(url) {
+      if (!url || url.trim() === '') return '';
+      let cleanUrl = url.trim();
+      
+      if (cleanUrl.includes('/pub')) {
+        return cleanUrl.includes('?') ? cleanUrl + '&embedded=true' : cleanUrl + '?embedded=true';
+      }
+
+      if (cleanUrl.includes('/document/d/')) {
+        return cleanUrl.replace(/\/edit.*$/, '/preview');
+      }
+
+      return cleanUrl;
+    }
+
+    function parseCSV(csvText) {
+      const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+      if (lines.length < 2) return [];
+
+      const result = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+        if (cols.length >= 2 && cols[1] !== '') {
+          const rawLink = cols[2] || '';
+          result.push({
+            num: cols[0] || i,
+            title: cols[1] || 'Névtelen Fejezet',
+            embedLink: formatDocEmbedUrl(rawLink)
+          });
+        }
+      }
+      return result;
+    }
+
+    function renderChronicles(chapters) {
+      const container = document.getElementById('chronicle-list');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (chapters.length === 0) {
+        container.innerHTML = '<div class="empty-state">Még nem születtek krónikák.</div>';
+        return;
+      }
+
+      chapters.forEach((ch, idx) => {
+        const card = document.createElement('div');
+        card.className = 'chapter-card';
+
+        const viewerId = `viewer-${idx}`;
+        const hasLink = ch.embedLink && ch.embedLink !== '';
+
+        card.innerHTML = `
+          <div class="chapter-header">
+            <div class="chapter-info">
+              <div class="chapter-num">${ch.num}</div>
+              <div class="chapter-title">${ch.title}</div>
+            </div>
+            ${hasLink ? `
+              <button class="read-btn" onclick="toggleViewer('${viewerId}', '${ch.embedLink}', this)">
+                Elolvasom
+              </button>
+            ` : `
+              <span style="color:#888; font-size:13px; font-style:italic;">Hamarosan...</span>
+            `}
+          </div>
+
+          ${hasLink ? `
+            <div class="doc-viewer-wrap" id="${viewerId}"></div>
+          ` : ''}
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function toggleViewer(viewerId, docUrl, btn) {
+      const viewer = document.getElementById(viewerId);
+      const isVisible = viewer.style.display === 'block';
+
+      if (isVisible) {
+        viewer.style.display = 'none';
+        btn.innerText = 'Elolvasom';
+      } else {
+        if (!viewer.innerHTML.trim()) {
+          viewer.innerHTML = `<iframe src="${docUrl}"></iframe>`;
+        }
+        viewer.style.display = 'block';
+        btn.innerText = 'Becsukás';
+      }
+    }
+
+    loadChronicles();
+  </script>
+  -->
+</body>
+</html>
